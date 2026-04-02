@@ -3,7 +3,7 @@ import pandas as pd
 import io
 
 # ページ設定 (Page Config)
-st.set_page_config(page_title="注文配送データ処理システム", page_icon="📦")
+st.set_page_config(page_title="注文配送データ処理システム", page_icon="📥")
 
 # --- 【ツール：ファイル読み込み関数】 ---
 def secure_read(file):
@@ -22,8 +22,8 @@ def secure_read(file):
     return pd.read_csv(file, encoding='utf-8-sig', dtype=str), "utf-8-sig で読み込み（デフォルト）"
 
 # --- 【メイン画面】 ---
-st.title("注文＆配送データ自動処理ツール 🧡")
-st.write("OrderファイルとDeliveryファイルをアップロードしてください。JANコードの補完、数量の連結、並べ替え、前方の0保持などの処理を自動で行います。")
+st.title("注文配送データ自動処理ツール")
+st.write("OrderファイルとDeliveryファイルをアップロードしてください。")
 
 # 1. ファイルアップロード
 col1, col2 = st.columns(2)
@@ -50,7 +50,7 @@ if order_file and delivery_file:
         if 'JANコード' in df_order.columns and '商品コード' in df_order.columns:
             df_order['JANコード'] = df_order['JANコード'].replace(['nan', 'None', '<NA>', ''], pd.NA)
             df_order['JANコード'] = df_order['JANコード'].fillna(df_order['商品コード'])
-            process_logs.append("✅ OrderファイルのJANコード補完が完了しました（0埋め保持）")
+            process_logs.append("✅ OrderファイルのJANコード補完が完了しました")
 
         # 2. JANコード * 数量 を Deliveryファイルの「品名２」へ
         if all(col in df_order.columns for col in ['注文番号', 'JANコード', '数量']) and '品名２' in df_delivery.columns:
@@ -74,7 +74,7 @@ if order_file and delivery_file:
             df_delivery['品名２'] = df_delivery['品名２'].astype(object)
             rows_to_fill = min(len(df_delivery), len(combined_list))
             df_delivery.iloc[:rows_to_fill, df_delivery.columns.get_loc('品名２')] = combined_list[:rows_to_fill]
-            process_logs.append(f"✅ JANコード*数量の連結が完了しました (例: {combined_list[0] if combined_list else 'N/A'})")
+            process_logs.append("✅ JANコード*数量の連結が完了しました")
         
         # 3. 品名２で降順ソート
         if '品名２' in df_delivery.columns:
@@ -85,7 +85,7 @@ if order_file and delivery_file:
         if 'お届け先電話番号' in df_delivery.columns:
             df_delivery['お届け先電話番号'] = df_delivery['お届け先電話番号'].replace(['nan', 'None', ''], pd.NA)
             df_delivery['お届け先電話番号'] = df_delivery['お届け先電話番号'].fillna('048-299-7267')
-            process_logs.append("✅ 空白の「お届け先電話番号」を補完しました")
+            process_logs.append("✅ お届け先電話番号を補完しました")
 
         # --- 処理ロジック終了 ---
 
@@ -102,13 +102,13 @@ if order_file and delivery_file:
         else: st.info(log)
 
     if not error_occurred:
-        st.success("🎉 処理が正常に完了しました！前方の0（00...）も保持されています。")
+        st.success("🎉 処理が正常に完了しました！")
         output = io.BytesIO()
         df_delivery.to_csv(output, index=False, encoding='utf-8-sig')
         processed_data = output.getvalue()
 
         st.download_button(
-            label="✨ 処理済みDeliveryファイルをダウンロード",
+            label="⬇️ 処理済みDeliveryファイルをダウンロード",
             data=processed_data,
             file_name="processed_delivery_final.csv",
             mime="text/csv"
@@ -117,4 +117,4 @@ if order_file and delivery_file:
         st.error("エラーのため、ファイルを作成できませんでした。")
 
 else:
-    st.info("ファイルをアップロードしてください... 🧡")
+    st.info("ファイルをアップロードしてください...")
