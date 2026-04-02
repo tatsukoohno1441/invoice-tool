@@ -21,7 +21,7 @@ def secure_read(file):
     return pd.read_csv(file, encoding='utf-8-sig', dtype=str), "utf-8-sig で読み込み（デフォルト）"
 
 # --- 【メイン画面】 ---
-st.title("注文配送データ自動処理ツール 🧡")
+st.title("注文配送データ自動処理ツール")
 st.write("OrderファイルとDeliveryファイルをアップロードしてください。注文番号をキーにしてデータを正確に紐付けます。")
 
 # 1. ファイルアップロード
