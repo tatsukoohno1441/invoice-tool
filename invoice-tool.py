@@ -124,4 +124,4 @@ if order_file and delivery_file:
             mime="text/csv"
         )
 else:
-    st.info("ファイルをアップロードしてください... 🧡")
+    st.info("ファイルをアップロードしてください...")
